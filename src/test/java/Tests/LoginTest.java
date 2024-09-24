@@ -8,7 +8,9 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -18,6 +20,8 @@ public class LoginTest extends BaseTest{
     @Test
     public void testValidLogin() throws IOException {
         test = extent.createTest("valid Login Test");
+
+        SoftAssert softAssert = new SoftAssert();
 
         try{
         driver.get("http://localhost:8080/login");
@@ -37,10 +41,12 @@ public class LoginTest extends BaseTest{
             } else {
                 test.fail("Not redirected to the dashboard after login.")
                         .addScreenCaptureFromPath(takeScreenshot(driver, "loginFailure"));
+                softAssert.fail("Not redirected to the correct URL.");
             }
          }catch(Exception e){
         test.fail("Login test failed due to: " + e.getMessage())
                 .addScreenCaptureFromPath(takeScreenshot(driver,"loginException"));
+            throw e;
      }
     }
 
