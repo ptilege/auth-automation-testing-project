@@ -32,7 +32,7 @@ public class LoginTest extends BaseTest{
             wait.until(ExpectedConditions.urlToBe("http://localhost:8080/dashboard"));
 
 
-            if (driver.getCurrentUrl().equals("http://localhost:8080/dad")) {
+            if (driver.getCurrentUrl().equals("http://localhost:8080/dashboard")) {
                 test.pass("Successfully logged in and redirected to the dashboard.");
             } else {
                 test.fail("Not redirected to the dashboard after login.")
