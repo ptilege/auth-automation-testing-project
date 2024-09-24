@@ -36,7 +36,7 @@ public class LoginTest extends BaseTest{
             wait.until(ExpectedConditions.urlToBe("http://localhost:8080/dashboard"));
 
 
-            if (driver.getCurrentUrl().equals("http://localhost:8080/dashboard")) {
+            if (driver.getCurrentUrl().equals("http://localhost:8080/dhboard")) {
                 test.pass("Successfully logged in and redirected to the dashboard.");
             } else {
                 test.fail("Not redirected to the dashboard after login.")
@@ -47,7 +47,9 @@ public class LoginTest extends BaseTest{
         test.fail("Login test failed due to: " + e.getMessage())
                 .addScreenCaptureFromPath(takeScreenshot(driver,"loginException"));
             throw e;
-     }
+     }finally {
+            softAssert.assertAll();
+        }
     }
 
     @Test
