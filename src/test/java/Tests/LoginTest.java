@@ -20,11 +20,11 @@ public class LoginTest extends BaseTest{
 
     @Test
     public void testValidLogin() throws IOException {
-        test = extent.createTest("valid Login Test");
+        test = extent.createTest("Valid Login Test");
 
         SoftAssert softAssert = new SoftAssert();
 
-        try{
+        try {
             driver.get("http://localhost:8080/login");
 
             LoginPage loginPage = new LoginPage(driver);
@@ -34,39 +34,41 @@ public class LoginTest extends BaseTest{
             loginPage.enterPassword("pasindu");
             loginPage.clickLoginButton();
 
+
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             wait.until(ExpectedConditions.urlToBe("http://localhost:8080/dashboard"));
 
 
             if (driver.getCurrentUrl().equals("http://localhost:8080/dashboard")) {
-                try{
-                    if(dashboardPage.getHeadingElement()){
-                        test.pass("Heading Element Is Also Displayed Successfully Logged In");
-                    }else{
-                        test.fail("Heading element is not displayed")
-                                .addScreenCaptureFromPath(takeScreenshot(driver,"loginFailure"));
-                        softAssert.fail("Heading element is not displayed");
-                    }
-                }catch(Exception e){
-                    test.fail("Login test failed due to : "+e.getMessage())
-                            .addScreenCaptureFromPath(takeScreenshot(driver,"loginException"));
+                try {
 
+                    if (dashboardPage.getHeadingElement()) {
+                        test.pass("Heading element is displayed. Successfully logged in and redirected to the dashboard.");
+                    } else {
+                        test.fail("Heading element is not displayed on the dashboard.")
+                                .addScreenCaptureFromPath(takeScreenshot(driver, "headingNotDisplayed"));
+                        softAssert.fail("Heading element is not displayed on the dashboard.");
+                    }
+                } catch (Exception e) {
+                    test.fail("An exception occurred while checking the heading element: " + e.getMessage())
+                            .addScreenCaptureFromPath(takeScreenshot(driver, "headingException"));
+                    softAssert.fail("Exception occurred while verifying the heading element: " + e.getMessage());
                 }
-                test.pass("Successfully logged in and redirected to the dashboard.");
             } else {
                 test.fail("Not redirected to the dashboard after login.")
                         .addScreenCaptureFromPath(takeScreenshot(driver, "loginFailure"));
                 softAssert.fail("Not redirected to the dashboard after login.");
-
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             test.fail("Login test failed due to: " + e.getMessage())
-                    .addScreenCaptureFromPath(takeScreenshot(driver,"loginException"));
+                    .addScreenCaptureFromPath(takeScreenshot(driver, "loginException"));
+            softAssert.fail("Login test failed: " + e.getMessage());
+        } finally {
 
-        }finally {
             softAssert.assertAll();
         }
     }
+
 
     @Test
     public void testInvalidUserName() throws IOException {
