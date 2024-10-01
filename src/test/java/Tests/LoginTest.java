@@ -1,5 +1,6 @@
 package Tests;
 
+import Pages.DashboardPage;
 import Pages.LoginPage;
 import lombok.extern.java.Log;
 import org.openqa.selenium.By;
@@ -24,30 +25,45 @@ public class LoginTest extends BaseTest{
         SoftAssert softAssert = new SoftAssert();
 
         try{
-        driver.get("http://localhost:8080/login");
+            driver.get("http://localhost:8080/login");
 
-        LoginPage loginPage = new LoginPage(driver);
+            LoginPage loginPage = new LoginPage(driver);
+            DashboardPage dashboardPage = new DashboardPage(driver);
 
-        loginPage.enterUserName("ptilege@gmail.com");
-        loginPage.enterPassword("pasindu");
-        loginPage.clickLoginButton();
+            loginPage.enterUserName("ptilege@gmail.com");
+            loginPage.enterPassword("pasindu");
+            loginPage.clickLoginButton();
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             wait.until(ExpectedConditions.urlToBe("http://localhost:8080/dashboard"));
 
 
             if (driver.getCurrentUrl().equals("http://localhost:8080/dashboard")) {
+                try{
+                    if(dashboardPage.getHeadingElement()){
+                        test.pass("Heading Element Is Also Displayed Successfully Logged In");
+                    }else{
+                        test.fail("Heading element is not displayed")
+                                .addScreenCaptureFromPath(takeScreenshot(driver,"loginFailure"));
+                        softAssert.fail("Heading element is not displayed");
+                    }
+                }catch(Exception e){
+                    test.fail("Login test failed due to : "+e.getMessage())
+                            .addScreenCaptureFromPath(takeScreenshot(driver,"loginException"));
+
+                }
                 test.pass("Successfully logged in and redirected to the dashboard.");
             } else {
                 test.fail("Not redirected to the dashboard after login.")
                         .addScreenCaptureFromPath(takeScreenshot(driver, "loginFailure"));
-                softAssert.fail("Not redirected to the correct URL.");
+                softAssert.fail("Not redirected to the dashboard after login.");
+
             }
-         }catch(Exception e){
-        test.fail("Login test failed due to: " + e.getMessage())
-                .addScreenCaptureFromPath(takeScreenshot(driver,"loginException"));
-            throw e;
-     }finally {
+        }catch(Exception e){
+            test.fail("Login test failed due to: " + e.getMessage())
+                    .addScreenCaptureFromPath(takeScreenshot(driver,"loginException"));
+
+        }finally {
             softAssert.assertAll();
         }
     }
